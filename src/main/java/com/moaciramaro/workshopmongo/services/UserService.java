@@ -34,6 +34,17 @@ public class UserService {
         repository.deleteById(id);
     }
 
+    public User update(User newUser) {
+        Optional<User> userInDb = repository.findById(newUser.getId());
+        updateData(newUser, userInDb);
+        return repository.save(userInDb.orElseThrow(() -> new ObjectNotFoundException("Failed on save")));
+    }
+
+    public void updateData(User newUser, Optional<User> userInDb) {
+        userInDb.ifPresent(user -> user.setName(newUser.getName()));
+        userInDb.ifPresent(user -> user.setEmail(newUser.getEmail()));
+    }
+
     public User fromDTO(UserDTO userDto) {
         return new User(userDto.getId(), userDto.getName(), userDto.getEmail());
     }
