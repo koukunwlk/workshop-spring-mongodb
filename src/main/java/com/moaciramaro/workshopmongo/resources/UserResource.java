@@ -1,5 +1,6 @@
 package com.moaciramaro.workshopmongo.resources;
 
+import com.moaciramaro.workshopmongo.domain.Post;
 import com.moaciramaro.workshopmongo.domain.User;
 import com.moaciramaro.workshopmongo.dto.UserDTO;
 import com.moaciramaro.workshopmongo.services.UserService;
@@ -25,11 +26,13 @@ public class UserResource {
         List<UserDTO> listDto = list.stream().map(user -> new UserDTO(user)).collect(Collectors.toList());
         return ResponseEntity.ok().body(listDto);
     }
+
     @RequestMapping(value = "/{id}",method = RequestMethod.GET)
     public ResponseEntity<UserDTO> findById(@PathVariable String id){
             User user = service.findById(id);
             return ResponseEntity.ok().body(new UserDTO(user));
     }
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Void> insert(@RequestBody UserDTO userDto) {
         User user =  service.fromDTO(userDto);
@@ -50,5 +53,11 @@ public class UserResource {
     public ResponseEntity<Void> delete(@PathVariable String id){
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @RequestMapping(value = "/{id}/posts",method = RequestMethod.GET)
+    public ResponseEntity<List<Post>> findPosts(@PathVariable String id){
+        User user = service.findById(id);
+        return ResponseEntity.ok().body(user.getPosts());
     }
 }
